@@ -55,8 +55,68 @@ namespace csvshuffle
 
         private void btnProcess_MouseClick(object sender, MouseEventArgs e)
         {
-            if(tbInputFile.Text.Length > 1 & tbOutputFile.Text.Length > 1 )
+            if (tbInputFile.Text.Length > 1 & tbOutputFile.Text.Length > 1 )
             {
+                var outputFormat = new reqformat();
+                outputFormat.columnOrder[0] = "id";
+                outputFormat.columnOrder[1] = "number";
+                outputFormat.columnOrder[2] = "quote";
+
+                var order = new List<int>();
+
+                var fhh = new FileHelperEngine<recordHeader>();
+                var inputh = fhh.ReadFile(tbInputFile.Text);
+
+                recordHeader header = inputh[0];
+
+                Console.WriteLine("File Headers:");
+                Console.WriteLine(header.ID);
+                Console.WriteLine(header.number);
+                Console.WriteLine(header.alpha);
+                Console.WriteLine(header.lz);
+                Console.WriteLine(header.quote);
+                Console.WriteLine(header.apo);
+
+                for (int fieldNum = 0; fieldNum < outputFormat.columnOrder.GetLength(0); fieldNum++)
+                {
+                    Console.WriteLine("Column to find: " + fieldNum.ToString() + " - " + outputFormat.columnOrder[fieldNum]);
+                    if (outputFormat.columnOrder[fieldNum] == header.ID)
+                    {
+                        Console.WriteLine(outputFormat.columnOrder[fieldNum] + " found");
+                        order[fieldNum] = 0;
+                    }
+                    else if (outputFormat.columnOrder[fieldNum] == header.number)
+                    {
+                        Console.WriteLine(outputFormat.columnOrder[fieldNum] + " found");
+                        order[fieldNum] = 1;
+                    }
+                    else if (outputFormat.columnOrder[fieldNum] == header.alpha)
+                    {
+                        Console.WriteLine(outputFormat.columnOrder[fieldNum] + " found");
+                        order[fieldNum] = 2;
+                    }
+                    else if (outputFormat.columnOrder[fieldNum] == header.lz)
+                    {
+                        Console.WriteLine(outputFormat.columnOrder[fieldNum] + " found");
+                        order[fieldNum] = 3;
+                    }
+                    else if (outputFormat.columnOrder[fieldNum] == header.quote)
+                    {
+                        Console.WriteLine(outputFormat.columnOrder[fieldNum] + " found");
+                        order[fieldNum] = 4;
+                    }
+                    else if (outputFormat.columnOrder[fieldNum] == header.apo)
+                    {
+                        Console.WriteLine(outputFormat.columnOrder[fieldNum] + " found");
+                        order[fieldNum] = 5;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not found");
+                        order[fieldNum] = -1;
+                    }
+                }
+
                 var fh = new FileHelperEngine<record>();
                 var input = fh.ReadFile(tbInputFile.Text);
 
@@ -77,6 +137,17 @@ namespace csvshuffle
     }
 }
 
+[DelimitedRecord(",")]
+public class recordHeader
+{
+    public string ID;
+    public string number;
+    public string alpha;
+    public string lz;
+    public string quote;
+    public string apo;
+}
+
 [DelimitedRecord(","), IgnoreFirst(1)]
 public class record
 {
@@ -86,4 +157,9 @@ public class record
     public string lz;
     public string quote;
     public string apo;
+}
+
+public class reqformat
+{
+    public string[] columnOrder;
 }
